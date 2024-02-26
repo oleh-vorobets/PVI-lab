@@ -1,0 +1,22 @@
+.DS_Store
+*.DS_Store
+template.html
+.vscode
+
+# Node.js
+node_modules/
+package-lock.json
+
+# Output
+dist/
+*.js
+*.js.map
+
+# TypeScript
+*.tsbuildinfo
+
+# Visual Studio Code
+.vscode/
+
+# Config
+*.env

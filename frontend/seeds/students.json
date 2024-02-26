@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "initials": "Roman Osadchyi",
+        "group": "PZ-23",
+        "gender": "M",
+        "birthday": "29.03.2005"
+    },
+    {
+        "id": 2,
+        "initials": "Artem Plyusnin",
+        "group": "PZ-23",
+        "gender": "M",
+        "birthday": "19.07.2005"
+    },
+    {
+        "id": 3,
+        "initials": "Sasha Simple",
+        "group": "PZ-21",
+        "gender": "M",
+        "birthday": "01.01.2005"
+    }
+]

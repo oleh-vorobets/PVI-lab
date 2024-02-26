@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Students</title>
+
+        <link rel="stylesheet" href="../styles/nav-styles.css" />
+        <link rel="stylesheet" href="../styles/menu-styles.css" />
+        <link rel="stylesheet" href="../styles/students-styles.css" />
+
+        <link rel="manifest" href="../manifest.json" />
+    </head>
+    <body>
+        <header class="nav-bar">
+            <span class="logo">CMS</span>
+
+            <div class="user-info">
+                <div class="bell-notification">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="bell"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                        />
+                    </svg>
+                    <div class="bell-dot"></div>
+                </div>
+                <div class="dropdown-content notification-dropdown closed">
+                    <div class="sender-info">
+                        <img
+                            src="../img/default-user-img.jpeg"
+                            alt="Image of default user"
+                            class="default-user-img sender-img"
+                        />
+                        <span class="sender-initials">Admin</span>
+                    </div>
+                    <div class="sended-message">
+                        <span class="sended-text"></span>
+                        <div class="arrow-left"></div>
+                    </div>
+
+                    <div class="sender-info">
+                        <img
+                            src="../img/default-user-img.jpeg"
+                            alt="Image of default user"
+                            class="default-user-img sender-img"
+                        />
+                        <span class="sender-initials">John K.</span>
+                    </div>
+                    <div class="sended-message">
+                        <span class="sended-text"></span>
+                        <div class="arrow-left"></div>
+                    </div>
+
+                    <div class="sender-info">
+                        <img
+                            src="../img/default-user-img.jpeg"
+                            alt="Image of default user"
+                            class="default-user-img sender-img"
+                        />
+                        <span class="sender-initials">Ann S.</span>
+                    </div>
+                    <div class="sended-message">
+                        <span class="sended-text"></span>
+                        <div class="arrow-left"></div>
+                    </div>
+                </div>
+
+                <div class="user-profile">
+                    <img
+                        src="../img/default-user-img.jpeg"
+                        alt="Image of default user"
+                        class="default-user-img"
+                    />
+                    <span class="user-name">James Bond</span>
+                </div>
+                <div class="dropdown-content user-dropdown closed">
+                    <a href="#">Profile</a>
+                    <a href="#">Log Out</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <aside class="menu-bar">
+                <a href="#" class="menu-line">Dashboard</a>
+                <a href="#" class="menu-line opened">Students</a>
+                <a href="#" class="menu-line">Tasks</a>
+            </aside>
+            <main>
+                <span class="title">Students</span>
+                <button class="add-student-btn">+</button>
+
+                <table class="student-tbl">
+                    <tbody class="student-tbl--body"></tbody>
+                </table>
+                <div class="pagination">
+                    <button class="pag-btn pag-btn-left">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="pag-btn-icon"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
+                    </button>
+                    <a href="#" class="pag-page-link pag-page-link--current"
+                        >1</a
+                    >
+                    <a href="#" class="pag-page-link">2</a>
+                    <a href="#" class="pag-page-link">3</a>
+                    <a href="#" class="pag-page-link">4</a>
+                    <a href="#" class="pag-page-link">5</a>
+                    <a href="#" class="pag-page-link">6</a>
+                    <button class="pag-btn pag-btn-right">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="pag-btn-icon"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5l7 7-7 7"
+                            />
+                        </svg>
+                    </button>
+                </div>
+            </main>
+        </div>
+        <!-- Modal window -->
+        <div class="modal-student-content">
+            <span class="exit">&times;</span>
+            <h2 class="modal-title"></h2>
+            <hr />
+            <div class="student-info">
+                <span>Group</span>
+                <form class="input-list">
+                    <input list="group-list" class="group--inp" />
+                    <datalist id="group-list">
+                        <option>PZ-21</option>
+                        <option>PZ-22</option>
+                        <option>PZ-23</option>
+                        <option>PZ-24</option>
+                        <option>PZ-25</option>
+                        <option>PZ-26</option>
+                        <option>PZ-27</option>
+                    </datalist>
+                </form>
+                <span>First name</span>
+                <input class="first-name--inp" />
+                <span>Last name</span>
+                <input class="last-name--inp" />
+                <span>Gender</span>
+                <form class="input-list">
+                    <input list="gender-list" class="gender--inp" />
+                    <datalist id="gender-list">
+                        <option>Male</option>
+                        <option>Female</option>
+                    </datalist>
+                </form>
+                <span>Birthday</span>
+                <input type="date" class="birthday--inp" />
+            </div>
+            <hr />
+            <div class="modal-btns">
+                <button class="create-btn">Create</button>
+                <button class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+
+        <div class="modal-warning-content">
+            <span class="exit">&times;</span>
+            <h2 class="modal-title">Warning</h2>
+            <hr />
+            <span class="warning-text"
+                >Are you sure you want to delete user?</span
+            >
+            <hr />
+            <div class="modal-btns">
+                <button class="delete-btn">Ok</button>
+                <button class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </body>
+    <script src="../scripts/dropdown-list.js"></script>
+    <script src="../scripts/configStudents.js"></script>
+    <script>
+        function toggle(source) {
+            const checkboxes = document.querySelectorAll(
+                'input[type="checkbox"]'
+            );
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+    </script>
+</html>
