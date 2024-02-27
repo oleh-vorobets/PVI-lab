@@ -1,10 +1,7 @@
-import dotenv from 'dotenv';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import studentsRouter from './routes/studentsRouter.js';
 import morgan from 'morgan';
-
-dotenv.config();
 
 const app = express();
 

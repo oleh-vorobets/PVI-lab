@@ -1,44 +1,116 @@
 import { NextFunction, Request, Response } from 'express';
-import { StudentGender, StudentGroup } from '../types/studentTypes.js';
+import { isStudentValid } from '../utils/studentValidator.js';
+import Student from '../models/studentModel.js';
+import { StudentType } from '../types/studentTypes.js';
 
-export async function validateStudent(
+export async function getStudents(
     req: Request,
     res: Response,
     next: NextFunction
 ) {
-    const student = req.body;
+    try {
+        const offset: number = req.query.page ? +req.query.page : 0;
+        const limit: number = req.query.rowsCount ? +req.query.rowsCount : 4;
 
-    if (!Object.values(StudentGroup).includes(student.group)) {
-        return res.status(404).json({
-            status: 'failed',
-            message: 'Invalid group',
+        const students = await Student.getStudents((offset - 1) * limit, limit);
+        return res.status(200).json({
+            status: 'success',
+            data: students,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            status: 'fail',
         });
     }
-    if (!Object.values(StudentGender).includes(student.gender)) {
-        return res.status(404).json({
-            status: 'failed',
-            message: 'Invalid student gender',
+}
+
+export async function deleteStudent(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const studentId = +req.params.id;
+        await Student.deleteStudentById(studentId);
+        return res.status(200).json({
+            status: 'success',
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            status: 'fail',
         });
     }
-    if (
-        !/^[A-Z]/.test(student.initials.split(' ')[0]) ||
-        !/^[A-Z]/.test(student.initials.split(' ')[1])
-    ) {
-        return res.status(404).json({
-            status: 'failed',
-            message: 'Invalid student name or surname',
+}
+
+export async function getStudent(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const studentId = +req.params.id;
+        const student = await Student.getStudentById(studentId);
+        return res.status(200).json({
+            status: 'success',
+            data: student,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            status: 'fail',
         });
     }
-    const birthday = new Date(student.birthday);
-    birthday.setFullYear(birthday.getFullYear() + 18);
-    const today = new Date();
-    if (today < birthday) {
-        return res.status(404).json({
-            status: 'failed',
-            message: 'Invalid student birthday date',
+}
+
+export async function postStudent(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const student: StudentType = req.body;
+        if (!isStudentValid(student)) {
+            throw new Error('Invalid student field(s)!');
+        }
+        const addedStudent = await Student.addStudent(student);
+
+        return res.status(200).json({
+            status: 'success',
+            data: addedStudent,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            status: 'fail',
         });
     }
-    return res.status(200).json({
-        status: 'success',
-    });
+}
+
+export async function updateStudent(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const student: StudentType = req.body;
+        if (!isStudentValid(student)) {
+            throw new Error('Invalid student field(s)!');
+        }
+        const updatedStudent = await Student.updateStudentById(
+            +student.student_id!,
+            student
+        );
+
+        return res.status(200).json({
+            status: 'success',
+            data: updatedStudent,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            status: 'fail',
+        });
+    }
 }

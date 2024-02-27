@@ -9,8 +9,6 @@ package-lock.json
 
 # Output
 dist/
-*.js
-*.js.map
 
 # TypeScript
 *.tsbuildinfo

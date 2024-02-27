@@ -12,3 +12,12 @@ export enum StudentGender {
     Male = 'M',
     Female = 'F',
 }
+
+export type StudentType = {
+    student_id?: number;
+    group: string;
+    first_name: string;
+    last_name: string;
+    gender: string;
+    birthday: Date;
+};
