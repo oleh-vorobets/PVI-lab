@@ -1,7 +1,7 @@
 const maxRowsCount = 4;
 const maxPagesCount = 6;
 let currentPage = +document.querySelector('.pag-page-link--current').innerText;
-let lastTriggeredStudent = null;
+let lastTriggeredStudentId = null;
 
 const tableBody = document.querySelector('.student-tbl--body');
 const modalStudentForm = document.querySelector('.modal-student-content');
@@ -32,193 +32,158 @@ const paginationArrowBtns = document.querySelectorAll('.pag-btn');
 
 //     await configStudentsPage();
 // });
-async function configStudentsPage() {
+
+window.addEventListener('load', async () => {
+    fillTable();
+});
+
+modalDeleteStudentBtn.addEventListener('click', async () => {
     const serverResponse = await fetch(
-        `/api/v1/students?page=${currentPage}&rowsCount=${maxRowsCount}`
+        `/api/v1/students/${lastTriggeredStudentId}`,
+        {
+            method: 'DELETE',
+        }
     );
-
     const parsedResponse = await serverResponse.json();
-
     if (parsedResponse.status === 'fail') {
-        return alert('Try again later!');
+        return alert('Try again later!'); // !!!!
     }
-    const parsedStudents = parsedResponse.data;
+    fillTable();
+    modalDeleteWarning.style.display = 'none';
+});
 
-    fillTable(parsedStudents);
+addStudentBtn.addEventListener('click', () => {
+    modalStudentFormTitle.textContent = 'Add student';
+    modalCreateOrEditBtn.innerText = 'Create';
+    fillInputs();
+    modalStudentForm.style.display = 'block';
+});
 
-    modalDeleteStudentBtn.addEventListener('click', async () => {
+modalCreateOrEditBtn.addEventListener('click', async () => {
+    if (modalCreateOrEditBtn.innerText === 'Create') {
+        const newStudent = getDataFromInputs();
+
+        const serverResponse = await fetch('/api/v1/students/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newStudent),
+        });
+        const parsedResponse = await serverResponse.json();
+
+        if (parsedResponse.status === 'fail') {
+            return alert('Try again later!'); // !!!!
+        }
+    } else {
+        const editedStudent = getDataFromInputs();
+
         const serverResponse = await fetch(
-            `/api/v1/students?page=${currentPage}&rowsCount=${maxRowsCount}`
-        );
-        fillTable(parsedStudents);
-        modalDeleteWarning.style.display = 'none';
-    });
-
-    addStudentBtn.addEventListener('click', () => {
-        modalStudentFormTitle.textContent = 'Add student';
-        modalCreateOrEditBtn.innerText = 'Create';
-        fillInputs();
-        modalStudentForm.style.display = 'block';
-    });
-
-    modalCreateOrEditBtn.addEventListener('click', async () => {
-        if (modalCreateOrEditBtn.innerText === 'Create') {
-            const newStudent = {
-                id: maxId,
-                initials:
-                    document.querySelector('.first-name--inp').value +
-                    ' ' +
-                    document.querySelector('.last-name--inp').value,
-                group: document.querySelector('.group--inp').value,
-                gender: document.querySelector('.gender--inp').value[0],
-                birthday: document
-                    .querySelector('.birthday--inp')
-                    .value.split('-')
-                    .reverse()
-                    .join('.'),
-            };
-            const parsedResponse = await fetch('/api/v1/students/validate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newStudent),
-            }).then((response) => response.json());
-            if (parsedResponse.status === 'success') {
-                ++maxId;
-                parsedStudents.push(newStudent);
-            } else {
-                return alert(parsedResponse.message);
-            }
-        } else {
-            const editedStudent = {
-                id: +lastTriggeredStudent.cells[7].innerText,
-                initials:
-                    document.querySelector('.first-name--inp').value +
-                    ' ' +
-                    document.querySelector('.last-name--inp').value,
-                group: document.querySelector('.group--inp').value,
-                gender: document.querySelector('.gender--inp').value[0],
-                birthday: document
-                    .querySelector('.birthday--inp')
-                    .value.split('-')
-                    .reverse()
-                    .join('.'),
-            };
-            const parsedResponse = await fetch('/api/v1/students/validate', {
-                method: 'POST',
+            `/api/v1/students/${lastTriggeredStudentId}`,
+            {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(editedStudent),
-            }).then((response) => response.json());
-            if (parsedResponse.status === 'success') {
-                parsedStudents = parsedStudents.map((student) => {
-                    if (student.id === editedStudent.id) return editedStudent;
-                    return student;
-                });
-            } else {
-                return alert(parsedResponse.message);
             }
+        );
+        const parsedResponse = await serverResponse.json();
+        if (parsedResponse.status === 'fail') {
+            return alert('Try again later!'); // !!!!
         }
-        fillTable(parsedStudents);
+    }
+    fillTable();
+    modalStudentForm.style.display = 'none';
+});
+
+exitBtns.forEach((exitButton) => {
+    exitButton.addEventListener('click', () => {
         modalStudentForm.style.display = 'none';
+        modalDeleteWarning.style.display = 'none';
     });
+});
 
-    exitBtns.forEach((exitButton) => {
-        exitButton.onclick = () => {
-            modalStudentForm.style.display = 'none';
-            modalDeleteWarning.style.display = 'none';
-        };
+cancelBtns.forEach((cancelBtn) => {
+    cancelBtn.addEventListener('click', () => {
+        modalStudentForm.style.display = 'none';
+        modalDeleteWarning.style.display = 'none';
     });
+});
 
-    cancelBtns.forEach((cancelBtn) => {
-        cancelBtn.onclick = () => {
-            modalStudentForm.style.display = 'none';
-            modalDeleteWarning.style.display = 'none';
-        };
+paginationNumberBtns.forEach((pageBtn) => {
+    pageBtn.addEventListener('click', () => {
+        document
+            .querySelector('.pag-page-link--current')
+            .classList.remove('pag-page-link--current');
+
+        pageBtn.classList.add('pag-page-link--current');
+        currentPage = +pageBtn.innerText;
+        fillTable();
     });
+});
 
-    paginationNumberBtns.forEach((pageBtn) => {
-        pageBtn.onclick = () => {
+paginationArrowBtns.forEach((pageArrowBtn) => {
+    pageArrowBtn.onclick = () => {
+        if (pageArrowBtn.classList.contains('pag-btn-left')) {
+            if (currentPage === 1) return;
+            --currentPage;
             document
                 .querySelector('.pag-page-link--current')
                 .classList.remove('pag-page-link--current');
 
-            pageBtn.classList.add('pag-page-link--current');
-            currentPage = +pageBtn.innerText;
-            fillTable(parsedStudents);
-        };
-    });
+            paginationNumberBtns.forEach((btn) => {
+                if (+btn.innerText === currentPage) {
+                    btn.classList.add('pag-page-link--current');
+                }
+            });
+        } else {
+            if (currentPage === maxPagesCount) return;
+            ++currentPage;
+            document
+                .querySelector('.pag-page-link--current')
+                .classList.remove('pag-page-link--current');
 
-    paginationArrowBtns.forEach((pageArrowBtn) => {
-        pageArrowBtn.onclick = () => {
-            if (pageArrowBtn.classList.contains('pag-btn-left')) {
-                if (currentPage === 1) return;
-                --currentPage;
-                document
-                    .querySelector('.pag-page-link--current')
-                    .classList.remove('pag-page-link--current');
+            paginationNumberBtns.forEach((btn) => {
+                if (+btn.innerText === currentPage) {
+                    btn.classList.add('pag-page-link--current');
+                }
+            });
+        }
+        fillTable();
+    };
+});
 
-                paginationNumberBtns.forEach((btn) => {
-                    if (+btn.innerText === currentPage) {
-                        btn.classList.add('pag-page-link--current');
-                    }
-                });
-            } else {
-                if (currentPage === maxPagesCount) return;
-                ++currentPage;
-                document
-                    .querySelector('.pag-page-link--current')
-                    .classList.remove('pag-page-link--current');
+window.addEventListener(
+    'click',
+    (event) => {
+        if (
+            modalStudentForm.style.display === 'block' &&
+            !modalStudentForm.contains(event.target)
+        ) {
+            modalStudentForm.style.display = 'none';
+        } else if (
+            modalDeleteWarning.style.display === 'block' &&
+            !modalDeleteWarning.contains(event.target)
+        ) {
+            modalDeleteWarning.style.display = 'none';
+        }
+    },
+    true
+);
 
-                paginationNumberBtns.forEach((btn) => {
-                    if (+btn.innerText === currentPage) {
-                        btn.classList.add('pag-page-link--current');
-                    }
-                });
-            }
-            fillTable(parsedStudents);
-        };
-    });
-
-    window.addEventListener(
-        'click',
-        (event) => {
-            if (
-                modalStudentForm.style.display === 'block' &&
-                !modalStudentForm.contains(event.target)
-            ) {
-                modalStudentForm.style.display = 'none';
-            } else if (
-                modalDeleteWarning.style.display === 'block' &&
-                !modalDeleteWarning.contains(event.target)
-            ) {
-                modalDeleteWarning.style.display = 'none';
-            }
-        },
-        true
+async function fillTable() {
+    const serverResponse = await fetch(
+        `/api/v1/students?page=${currentPage}&rowsCount=${maxRowsCount}`
     );
-}
+    const parsedResponse = await serverResponse.json();
 
-function fillInputs(
-    group = '',
-    name = '',
-    surname = '',
-    gender = '',
-    birthday = ''
-) {
-    document.querySelector('.group--inp').value = group;
-    document.querySelector('.first-name--inp').value = name;
-    document.querySelector('.last-name--inp').value = surname;
-    document.querySelector('.gender--inp').value = gender;
-    document.querySelector('.birthday--inp').value = birthday
-        .split('.')
-        .reverse()
-        .join('-');
-}
+    if (parsedResponse.status === 'fail') {
+        return alert('Try again later!'); // !!!!
+    }
 
-function fillTable(studentsArray) {
+    const parsedStudents = parsedResponse.data;
+
     tableBody.innerHTML = '';
 
     const row = document.createElement('tr');
@@ -242,7 +207,7 @@ function fillTable(studentsArray) {
     tableBody.appendChild(row);
 
     for (let i = 0; i < maxRowsCount; ++i) {
-        const student = studentsArray[i];
+        const student = parsedStudents[i];
 
         const row = document.createElement('tr');
 
@@ -268,6 +233,7 @@ function fillTable(studentsArray) {
         <td>${student.first_name} ${student.last_name}</td>
         <td>${student.gender}</td>
         <td>${parseDate(student.birthday)}</td>
+        <td class="closed student-id">${student.student_id}</td>
 
         <td><div class="status"></div></td>
         <td>
@@ -304,7 +270,6 @@ function fillTable(studentsArray) {
                 </svg>
             </button>
         </td>
-        <td class="closed student-id">${student.student_id}</td>
         `;
             tableBody.appendChild(row);
         }
@@ -318,29 +283,48 @@ function setTableBtnEvents() {
         document.getElementsByClassName('delete-student');
 
     Array.from(editBtns).forEach((button) => {
-        button.addEventListener('click', function (event) {
-            lastTriggeredStudent = event.currentTarget.closest('tr');
+        button.addEventListener('click', async function (event) {
+            const closestTr = event.currentTarget.closest('tr');
+            lastTriggeredStudentId =
+                +closestTr.querySelector('.student-id').textContent;
+
             modalStudentFormTitle.textContent = 'Edit student';
             modalCreateOrEditBtn.innerText = 'Save';
-            fillInputs(
-                lastTriggeredStudent.cells[1].innerText,
-                lastTriggeredStudent.cells[2].innerText.split(' ')[0],
-                lastTriggeredStudent.cells[2].innerText.split(' ')[1],
-                lastTriggeredStudent.cells[3].innerText,
-                lastTriggeredStudent.cells[4].innerText
+
+            const serverResponse = await fetch(
+                `/api/v1/students/${lastTriggeredStudentId}`
             );
+            const parsedResponse = await serverResponse.json();
+            if (parsedResponse.status === 'fail') {
+                return alert('Try again later!');
+            }
+            const parsedStudents = parsedResponse.data;
+            fillInputs(parsedStudents);
             modalStudentForm.style.display = 'block';
         });
     });
 
     Array.from(modalDeleteStudentBtns).forEach((button) => {
-        button.addEventListener('click', function (event) {
-            lastTriggeredStudent = event.currentTarget.closest('tr');
-            const initials = lastTriggeredStudent.cells[2].innerText;
+        button.addEventListener('click', async function (event) {
+            const closestTr = event.currentTarget.closest('tr');
+            lastTriggeredStudentId =
+                +closestTr.querySelector('.student-id').textContent;
+
+            const serverResponse = await fetch(
+                `/api/v1/students/${lastTriggeredStudentId}`
+            );
+            const parsedResponse = await serverResponse.json();
+            if (parsedResponse.status === 'fail') {
+                return alert('Try again later!');
+            }
 
             document.querySelector(
                 '.warning-text'
-            ).innerText = `Are you sure you want to delete user ${initials}?`;
+            ).innerText = `Are you sure you want to delete user ${
+                parsedResponse.data.first_name +
+                ' ' +
+                parsedResponse.data.last_name
+            }?`;
 
             modalDeleteWarning.style.display = 'block';
         });
@@ -348,9 +332,38 @@ function setTableBtnEvents() {
 }
 
 function parseDate(dateString) {
-    let d = new Date(dateString);
-    d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
-    return d.toISOString().split('T')[0];
+    if (dateString) {
+        let d = new Date(dateString);
+        d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+        return d.toISOString().split('T')[0];
+    }
 }
 
-configStudentsPage();
+function getDataFromInputs() {
+    return {
+        first_name: document.querySelector('.first-name--inp').value,
+        last_name: document.querySelector('.last-name--inp').value,
+        group: document.querySelector('.group--inp').value,
+        gender: document.querySelector('.gender--inp').value,
+        birthday: document.querySelector('.birthday--inp').value,
+    };
+}
+
+function fillInputs(student = {}) {
+    if (Object.keys(student).length === 0) {
+        document.querySelector('.group--inp').value = '';
+        document.querySelector('.first-name--inp').value = '';
+        document.querySelector('.last-name--inp').value = '';
+        document.querySelector('.gender--inp').value = '';
+        document.querySelector('.birthday--inp').value = '';
+    } else {
+        document.querySelector('.group--inp').value = student.group || '';
+        document.querySelector('.first-name--inp').value =
+            student.first_name || '';
+        document.querySelector('.last-name--inp').value =
+            student.last_name || '';
+        document.querySelector('.gender--inp').value = student.gender || '';
+        document.querySelector('.birthday--inp').value =
+            parseDate(student.birthday) || '';
+    }
+}

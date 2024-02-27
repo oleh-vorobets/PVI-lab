@@ -28,9 +28,10 @@ class StudentModel {
         try {
             const connection = await connectToDB();
             const [rows, fields]: [RowDataPacket[], FieldPacket[]] =
-                await connection.query(`SELECT * FROM students WHERE id = ?`, [
-                    studentId,
-                ]);
+                await connection.query(
+                    `SELECT * FROM students WHERE student_id = ?`,
+                    [studentId]
+                );
             connection.release();
             return rows[0] as StudentType;
         } catch (error) {
@@ -51,14 +52,15 @@ class StudentModel {
             ];
             const [result]: [ResultSetHeader, FieldPacket[]] =
                 await connection.query(
-                    `INSERT INTO students (group, first_name, last_name, gender, birthday) VALUES (?, ?, ?, ?, ?)`,
+                    `INSERT INTO students (\`group\`, first_name, last_name, gender, birthday) VALUES (?, ?, ?, ?, ?)`,
                     values
                 );
             const studentId = result.insertId;
             const [newStudent]: [RowDataPacket[], FieldPacket[]] =
-                await connection.query(`SELECT * FROM students WHERE id = ?`, [
-                    studentId,
-                ]);
+                await connection.query(
+                    `SELECT * FROM students WHERE student_id = ?`,
+                    [studentId]
+                );
             connection.release();
             return newStudent[0] as StudentType;
         } catch (error) {
@@ -74,14 +76,15 @@ class StudentModel {
         try {
             const connection = await connectToDB();
             const [result]: [ResultSetHeader, FieldPacket[]] =
-                await connection.query(`UPDATE students SET ? WHERE id = ?`, [
-                    student,
-                    studentId,
-                ]);
+                await connection.query(
+                    `UPDATE students SET ? WHERE student_id = ?`,
+                    [student, studentId]
+                );
             const [updatedStudent]: [RowDataPacket[], FieldPacket[]] =
-                await connection.query(`SELECT * FROM students WHERE id = ?`, [
-                    studentId,
-                ]);
+                await connection.query(
+                    `SELECT * FROM students WHERE student_id = ?`,
+                    [studentId]
+                );
             connection.release();
             return updatedStudent[0] as StudentType;
         } catch (error) {
@@ -94,9 +97,10 @@ class StudentModel {
         try {
             const connection = await connectToDB();
             const [result]: [ResultSetHeader, FieldPacket[]] =
-                await connection.query(`DELETE FROM students WHERE id = ?`, [
-                    studentId,
-                ]);
+                await connection.query(
+                    `DELETE FROM students WHERE student_id = ?`,
+                    [studentId]
+                );
             connection.release();
             return result.affectedRows > 0;
         } catch (error) {

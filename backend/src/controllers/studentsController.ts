@@ -32,10 +32,14 @@ export async function deleteStudent(
 ) {
     try {
         const studentId = +req.params.id;
-        await Student.deleteStudentById(studentId);
-        return res.status(200).json({
-            status: 'success',
-        });
+        const isDeleted = await Student.deleteStudentById(studentId);
+        if (isDeleted) {
+            return res.status(200).json({
+                status: 'success',
+            });
+        } else {
+            throw new Error('Student was not found!');
+        }
     } catch (err) {
         console.log(err);
         return res.status(500).json({
@@ -94,12 +98,13 @@ export async function updateStudent(
     next: NextFunction
 ) {
     try {
-        const student: StudentType = req.body;
+        const studentId: number = +req.params.id;
+        const student = req.body;
         if (!isStudentValid(student)) {
             throw new Error('Invalid student field(s)!');
         }
         const updatedStudent = await Student.updateStudentById(
-            +student.student_id!,
+            studentId,
             student
         );
 

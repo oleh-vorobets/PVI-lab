@@ -9,8 +9,8 @@ export enum StudentGroup {
 }
 
 export enum StudentGender {
-    Male = 'M',
-    Female = 'F',
+    Male = 'Male',
+    Female = 'Female',
 }
 
 export type StudentType = {
