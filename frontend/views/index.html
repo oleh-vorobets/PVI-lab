@@ -146,63 +146,63 @@
                 </div>
             </main>
         </div>
-        <!-- Modal window -->
-        <div class="modal-student-content">
-            <span class="exit">&times;</span>
-            <h2 class="modal-title"></h2>
-            <hr />
-            <div class="student-info">
-                <span>Group</span>
-                <form class="input-list">
-                    <input list="group-list" class="group--inp" />
-                    <datalist id="group-list">
-                        <option>PZ-21</option>
-                        <option>PZ-22</option>
-                        <option>PZ-23</option>
-                        <option>PZ-24</option>
-                        <option>PZ-25</option>
-                        <option>PZ-26</option>
-                        <option>PZ-27</option>
-                    </datalist>
-                </form>
-                <span>First name</span>
-                <input class="first-name--inp" />
-                <span>Last name</span>
-                <input class="last-name--inp" />
-                <span>Gender</span>
-                <form class="input-list">
-                    <input list="gender-list" class="gender--inp" />
-                    <datalist id="gender-list">
-                        <option>Male</option>
-                        <option>Female</option>
-                    </datalist>
-                </form>
-                <span>Birthday</span>
-                <input type="date" class="birthday--inp" />
+        <div class="black-box">
+            <!-- Modal window -->
+            <div class="modal-student-content">
+                <span class="exit">&times;</span>
+                <h2 class="modal-title"></h2>
+                <hr />
+                <div class="student-info">
+                    <span>Group</span>
+                    <form class="input-list">
+                        <input list="group-list" class="group--inp" />
+                        <datalist id="group-list">
+                            <option>PZ-21</option>
+                            <option>PZ-22</option>
+                            <option>PZ-23</option>
+                            <option>PZ-24</option>
+                            <option>PZ-25</option>
+                            <option>PZ-26</option>
+                            <option>PZ-27</option>
+                        </datalist>
+                    </form>
+                    <span>First name</span>
+                    <input class="first-name--inp" />
+                    <span>Last name</span>
+                    <input class="last-name--inp" />
+                    <span>Gender</span>
+                    <form class="input-list">
+                        <input list="gender-list" class="gender--inp" />
+                        <datalist id="gender-list">
+                            <option>Male</option>
+                            <option>Female</option>
+                        </datalist>
+                    </form>
+                    <span>Birthday</span>
+                    <input type="date" class="birthday--inp" />
+                </div>
+                <hr />
+                <div class="modal-btns">
+                    <button class="create-btn">Create</button>
+                    <button class="cancel-btn">Cancel</button>
+                </div>
             </div>
-            <hr />
-            <div class="modal-btns">
-                <button class="create-btn">Create</button>
-                <button class="cancel-btn">Cancel</button>
-            </div>
-        </div>
 
-        <div class="modal-warning-content">
-            <span class="exit">&times;</span>
-            <h2 class="modal-title">Warning</h2>
-            <hr />
-            <span class="warning-text"
-                >Are you sure you want to delete user?</span
-            >
-            <hr />
-            <div class="modal-btns">
-                <button class="delete-btn">Ok</button>
-                <button class="cancel-btn">Cancel</button>
+            <div class="modal-warning-content">
+                <span class="exit">&times;</span>
+                <h2 class="modal-title">Warning</h2>
+                <hr />
+                <span class="warning-text"></span>
+                <hr />
+                <div class="modal-btns">
+                    <button class="delete-btn">Ok</button>
+                    <button class="cancel-btn">Cancel</button>
+                </div>
             </div>
         </div>
     </body>
     <script src="../scripts/dropdown-list.js"></script>
-    <script src="../scripts/configStudents.js"></script>
+    <script type="module" src="../scripts/configStudents.js"></script>
     <script>
         function toggle(source) {
             const checkboxes = document.querySelectorAll(

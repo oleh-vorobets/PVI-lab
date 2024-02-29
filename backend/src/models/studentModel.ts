@@ -7,7 +7,7 @@ import { connectToDB } from '../db/databaseConnector.js';
 
 class StudentModel {
     async getStudents(
-        offset: number,
+        offset: number = 0,
         limit: number = 4
     ): Promise<StudentType[]> {
         try {
@@ -19,7 +19,6 @@ class StudentModel {
             connection.release();
             return rows as StudentType[];
         } catch (error) {
-            console.error('Error fetching students:', error);
             throw error;
         }
     }
@@ -35,12 +34,11 @@ class StudentModel {
             connection.release();
             return rows[0] as StudentType;
         } catch (error) {
-            console.error('Error fetching student:', error);
             throw error;
         }
     }
 
-    async addStudent(student: StudentType): Promise<StudentType> {
+    async addStudent(student: StudentType): Promise<number> {
         try {
             const connection = await connectToDB();
             const values = [
@@ -55,16 +53,9 @@ class StudentModel {
                     `INSERT INTO students (\`group\`, first_name, last_name, gender, birthday) VALUES (?, ?, ?, ?, ?)`,
                     values
                 );
-            const studentId = result.insertId;
-            const [newStudent]: [RowDataPacket[], FieldPacket[]] =
-                await connection.query(
-                    `SELECT * FROM students WHERE student_id = ?`,
-                    [studentId]
-                );
             connection.release();
-            return newStudent[0] as StudentType;
+            return result.insertId;
         } catch (error) {
-            console.error('Error fetching student:', error);
             throw error;
         }
     }
@@ -72,7 +63,7 @@ class StudentModel {
     async updateStudentById(
         studentId: number,
         student: StudentType
-    ): Promise<StudentType> {
+    ): Promise<boolean> {
         try {
             const connection = await connectToDB();
             const [result]: [ResultSetHeader, FieldPacket[]] =
@@ -80,20 +71,15 @@ class StudentModel {
                     `UPDATE students SET ? WHERE student_id = ?`,
                     [student, studentId]
                 );
-            const [updatedStudent]: [RowDataPacket[], FieldPacket[]] =
-                await connection.query(
-                    `SELECT * FROM students WHERE student_id = ?`,
-                    [studentId]
-                );
+
             connection.release();
-            return updatedStudent[0] as StudentType;
+            return result.affectedRows > 0;
         } catch (error) {
-            console.error('Error fetching student:', error);
             throw error;
         }
     }
 
-    async deleteStudentById(studentId: number) {
+    async deleteStudentById(studentId: number): Promise<boolean> {
         try {
             const connection = await connectToDB();
             const [result]: [ResultSetHeader, FieldPacket[]] =
@@ -104,7 +90,6 @@ class StudentModel {
             connection.release();
             return result.affectedRows > 0;
         } catch (error) {
-            console.error('Error fetching student:', error);
             throw error;
         }
     }

@@ -1,9 +1,12 @@
+import errorAlert from './errorAlert.js';
+
 const maxRowsCount = 4;
 const maxPagesCount = 6;
 let currentPage = +document.querySelector('.pag-page-link--current').innerText;
 let lastTriggeredStudentId = null;
 
 const tableBody = document.querySelector('.student-tbl--body');
+const blackBox = document.querySelector('.black-box');
 const modalStudentForm = document.querySelector('.modal-student-content');
 const modalStudentFormTitle = document.querySelector('.modal-title');
 const modalDeleteWarning = document.querySelector('.modal-warning-content');
@@ -20,18 +23,16 @@ const modalDeleteStudentBtn = document.querySelector(
 const paginationNumberBtns = document.querySelectorAll('.pag-page-link');
 const paginationArrowBtns = document.querySelectorAll('.pag-btn');
 
-// window.addEventListener('load', async () => {
-//     if (navigator.serviceWorker) {
-//         try {
-//             const reg = await navigator.serviceWorker.register('../sw.js');
-//             console.log('Service worker register success', reg);
-//         } catch (err) {
-//             console.log('Service worker register failed', err);
-//         }
-//     }
-
-//     await configStudentsPage();
-// });
+window.addEventListener('load', async () => {
+    if (navigator.serviceWorker) {
+        try {
+            const reg = await navigator.serviceWorker.register('../sw.js');
+            console.log('Service worker register success', reg);
+        } catch (err) {
+            console.log('Service worker register failed', err);
+        }
+    }
+});
 
 window.addEventListener('load', async () => {
     fillTable();
@@ -45,10 +46,11 @@ modalDeleteStudentBtn.addEventListener('click', async () => {
         }
     );
     const parsedResponse = await serverResponse.json();
-    if (parsedResponse.status === 'fail') {
-        return alert('Try again later!'); // !!!!
+    if (parsedResponse.status !== 'success') {
+        return errorAlert(parsedResponse.message);
     }
     fillTable();
+    blackBox.style.display = 'none';
     modalDeleteWarning.style.display = 'none';
 });
 
@@ -56,6 +58,7 @@ addStudentBtn.addEventListener('click', () => {
     modalStudentFormTitle.textContent = 'Add student';
     modalCreateOrEditBtn.innerText = 'Create';
     fillInputs();
+    blackBox.style.display = 'flex';
     modalStudentForm.style.display = 'block';
 });
 
@@ -72,8 +75,8 @@ modalCreateOrEditBtn.addEventListener('click', async () => {
         });
         const parsedResponse = await serverResponse.json();
 
-        if (parsedResponse.status === 'fail') {
-            return alert('Try again later!'); // !!!!
+        if (parsedResponse.status !== 'success') {
+            return errorAlert(parsedResponse.message);
         }
     } else {
         const editedStudent = getDataFromInputs();
@@ -89,11 +92,12 @@ modalCreateOrEditBtn.addEventListener('click', async () => {
             }
         );
         const parsedResponse = await serverResponse.json();
-        if (parsedResponse.status === 'fail') {
-            return alert('Try again later!'); // !!!!
+        if (parsedResponse.status !== 'success') {
+            return errorAlert(parsedResponse.message);
         }
     }
     fillTable();
+    blackBox.style.display = 'none';
     modalStudentForm.style.display = 'none';
 });
 
@@ -101,6 +105,7 @@ exitBtns.forEach((exitButton) => {
     exitButton.addEventListener('click', () => {
         modalStudentForm.style.display = 'none';
         modalDeleteWarning.style.display = 'none';
+        blackBox.style.display = 'none';
     });
 });
 
@@ -108,6 +113,7 @@ cancelBtns.forEach((cancelBtn) => {
     cancelBtn.addEventListener('click', () => {
         modalStudentForm.style.display = 'none';
         modalDeleteWarning.style.display = 'none';
+        blackBox.style.display = 'none';
     });
 });
 
@@ -162,11 +168,13 @@ window.addEventListener(
             !modalStudentForm.contains(event.target)
         ) {
             modalStudentForm.style.display = 'none';
+            blackBox.style.display = 'none';
         } else if (
             modalDeleteWarning.style.display === 'block' &&
             !modalDeleteWarning.contains(event.target)
         ) {
             modalDeleteWarning.style.display = 'none';
+            blackBox.style.display = 'none';
         }
     },
     true
@@ -178,8 +186,8 @@ async function fillTable() {
     );
     const parsedResponse = await serverResponse.json();
 
-    if (parsedResponse.status === 'fail') {
-        return alert('Try again later!'); // !!!!
+    if (parsedResponse.status !== 'success') {
+        return errorAlert(parsedResponse.message);
     }
 
     const parsedStudents = parsedResponse.data;
@@ -295,11 +303,12 @@ function setTableBtnEvents() {
                 `/api/v1/students/${lastTriggeredStudentId}`
             );
             const parsedResponse = await serverResponse.json();
-            if (parsedResponse.status === 'fail') {
-                return alert('Try again later!');
+            if (parsedResponse.status !== 'success') {
+                return errorAlert(parsedResponse.message);
             }
             const parsedStudents = parsedResponse.data;
             fillInputs(parsedStudents);
+            blackBox.style.display = 'flex';
             modalStudentForm.style.display = 'block';
         });
     });
@@ -314,8 +323,8 @@ function setTableBtnEvents() {
                 `/api/v1/students/${lastTriggeredStudentId}`
             );
             const parsedResponse = await serverResponse.json();
-            if (parsedResponse.status === 'fail') {
-                return alert('Try again later!');
+            if (parsedResponse.status !== 'success') {
+                return errorAlert(parsedResponse.message);
             }
 
             document.querySelector(
@@ -325,7 +334,7 @@ function setTableBtnEvents() {
                 ' ' +
                 parsedResponse.data.last_name
             }?`;
-
+            blackBox.style.display = 'flex';
             modalDeleteWarning.style.display = 'block';
         });
     });
@@ -341,11 +350,11 @@ function parseDate(dateString) {
 
 function getDataFromInputs() {
     return {
-        first_name: document.querySelector('.first-name--inp').value,
-        last_name: document.querySelector('.last-name--inp').value,
-        group: document.querySelector('.group--inp').value,
-        gender: document.querySelector('.gender--inp').value,
-        birthday: document.querySelector('.birthday--inp').value,
+        first_name: document.querySelector('.first-name--inp').value.trim(),
+        last_name: document.querySelector('.last-name--inp').value.trim(),
+        group: document.querySelector('.group--inp').value.trim(),
+        gender: document.querySelector('.gender--inp').value.trim(),
+        birthday: document.querySelector('.birthday--inp').value.trim(),
     };
 }
 

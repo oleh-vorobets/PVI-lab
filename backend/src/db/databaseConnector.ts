@@ -1,5 +1,6 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
+import AppError from '../utils/appError.js';
 dotenv.config();
 
 const pool = mysql.createPool({
@@ -16,6 +17,9 @@ export const connectToDB = async () => {
     try {
         return await pool.promise().getConnection();
     } catch (error) {
-        throw error;
+        throw new AppError(
+            'Can not connect to Database. Please try again later...',
+            500
+        );
     }
 };

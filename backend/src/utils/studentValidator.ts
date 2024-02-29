@@ -1,26 +1,54 @@
 import { StudentType } from '../types/studentTypes.js';
 import { StudentGender, StudentGroup } from '../types/studentTypes.js';
 
-export function isStudentValid(student: StudentType): Boolean {
+export function isStudentValid(student: StudentType): string {
+    const validationErrors = [];
     if (!Object.values(StudentGroup).includes(student.group as StudentGroup)) {
-        return false;
+        validationErrors.push('invalid group');
     }
     if (
         !Object.values(StudentGender).includes(student.gender as StudentGender)
     ) {
-        return false;
+        validationErrors.push('invalid gender');
     }
-    if (
-        !/^[A-Z]/.test(student.first_name) ||
-        !/^[A-Z]/.test(student.last_name)
-    ) {
-        return false;
+    if (!/^[A-Z][a-z\-\']{1,10}/.test(student.first_name)) {
+        validationErrors.push('invalid name');
     }
+    if (!/^[A-Z][a-z\-\']{1,10}/.test(student.last_name)) {
+        validationErrors.push('invalid surname');
+    }
+
     const birthday = new Date(student.birthday);
-    birthday.setFullYear(birthday.getFullYear() + 18);
     const today = new Date();
-    if (today < birthday) {
-        return false;
+    const minBirthDate = new Date('1955-01-01');
+    const minValidBirthDate = new Date();
+    minValidBirthDate.setFullYear(minValidBirthDate.getFullYear() - 18);
+
+    if (
+        birthday > today ||
+        birthday < minBirthDate ||
+        birthday > minValidBirthDate
+    ) {
+        validationErrors.push('invalid birth date');
     }
-    return true;
+
+    return concatString(validationErrors);
+}
+
+function concatString(arrayOfStrings: string[]): string {
+    if (arrayOfStrings.length === 0) return '';
+
+    let errorMessage = arrayOfStrings.join(', ');
+
+    const lastIndex = errorMessage.lastIndexOf(',');
+
+    if (lastIndex !== -1) {
+        errorMessage =
+            errorMessage.substring(0, lastIndex) +
+            ' and' +
+            errorMessage.substring(lastIndex + 1);
+    }
+    console.log(errorMessage);
+
+    return errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1);
 }

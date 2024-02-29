@@ -5,13 +5,13 @@
 } */
 
 .menu-bar {
-    font-size: 20px;
+    font-size: 1.5rem;
     line-height: 1.5;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     align-items: flex-start;
-    margin: 3rem 4rem;
+    margin: 2rem 2.5rem;
 }
 
 .menu-bar a:link {
@@ -19,11 +19,14 @@
     text-decoration: none;
 }
 
-.menu-line:active,
-.menu-line:hover,
 .menu-line:visited,
 .menu-line:link {
     color: #747474;
+}
+
+.menu-line:hover,
+.menu-line:active {
+    color: #464646;
 }
 
 .opened:active,

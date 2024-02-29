@@ -5,7 +5,6 @@ import app from './app.js';
 import { connectToDB } from './db/databaseConnector.js';
 
 const port: number = +process.env.PORT! || 3000;
-console.log(port);
 
 async function startServer() {
     try {
@@ -19,4 +18,4 @@ async function startServer() {
     }
 }
 
-startServer();
+await startServer();

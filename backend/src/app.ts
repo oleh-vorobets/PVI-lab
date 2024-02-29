@@ -1,13 +1,18 @@
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
-import studentsRouter from './routes/studentsRouter.js';
 import morgan from 'morgan';
+import cors from 'cors';
+
+import { globalErrorHandler } from './controllers/errorController.js';
+import studentsRouter from './routes/studentsRouter.js';
 
 const app = express();
 
 app.set('view engine', 'ejs');
 
 app.use(express.json());
+
+app.use(cors());
 
 app.use(morgan('dev'));
 
@@ -35,5 +40,7 @@ app.use('*', (req: Request, res: Response, next: NextFunction) => {
         path.resolve(currentDir, '../../frontend/views/notFound.html')
     );
 });
+
+app.use(globalErrorHandler);
 
 export default app;
